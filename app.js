@@ -117,78 +117,77 @@ function uiController() {
   };
 }
 
-// GLOBAL APP controller (IIFE)
+// GLOBAL APP controller 
+const processCtrl = processController();
+const uiCtrl = uiController();
 
-  const processCtrl = processController();
-  const uiCtrl = uiController();
+const fs = require('fs');
 
-  const fs = require('fs');
+// Check if the accounts directory exists, create it if not
+if (!fs.existsSync('./accounts/')) {
+  fs.mkdirSync('./accounts/');
+}
 
-  // Check if the accounts directory exists, create it if not
-  if (!fs.existsSync('./accounts/')) {
-    fs.mkdirSync('./accounts/');
-  }
+function mainMenu() {
+  console.log('\n=== Main Menu ===');
+  console.log('1. Create Account');
+  console.log('2. Login');
+  console.log('3. Exit');
 
-  function mainMenu() {
-    console.log('\n=== Main Menu ===');
-    console.log('1. Create Account');
-    console.log('2. Login');
-    console.log('3. Exit');
-
-    uiCtrl.promptUserInput('Select an option (1-3): ', (choice) => {
-      switch (choice) {
-        case '1':
-          uiCtrl.promptUserInput('Enter your username: ', (username) => {
-            uiCtrl.promptUserInput('Enter your password: ', (password) => {
-              processCtrl.createAccount(username, password);
-            });
+  uiCtrl.promptUserInput('Select an option (1-3): ', (choice) => {
+    switch (choice) {
+      case '1':
+        uiCtrl.promptUserInput('Enter your username: ', (username) => {
+          uiCtrl.promptUserInput('Enter your password: ', (password) => {
+            processCtrl.createAccount(username, password);
           });
-          break;
-        case '2':
-          uiCtrl.promptUserInput('Enter your username: ', (username) => {
-            uiCtrl.promptUserInput('Enter your password: ', (password) => {
-              processCtrl.login(username, password);
-            });
+        });
+        break;
+      case '2':
+        uiCtrl.promptUserInput('Enter your username: ', (username) => {
+          uiCtrl.promptUserInput('Enter your password: ', (password) => {
+            processCtrl.login(username, password);
           });
-          break;
-        case '3':
-          rl.close();
-          break;
-        default:
-          console.log('Invalid option. Please try again.');
-          mainMenu();
-      }
-    });
-  }
+        });
+        break;
+      case '3':
+        rl.close();
+        break;
+      default:
+        console.log('Invalid option. Please try again.');
+        mainMenu();
+    }
+  });
+}
 
-  function accountMenu(username) {
-    console.log('\n=== Account Menu ===');
-    console.log('1. Confirm your Address');
-    console.log('2. Order Pick-Up');
-    console.log('3. Show Order Details');
-    console.log('4. Exit Account');
+function accountMenu(username) {
+  console.log('\n=== Account Menu ===');
+  console.log('1. Confirm your Address');
+  console.log('2. Order Pick-Up');
+  console.log('3. Show Order Details');
+  console.log('4. Exit Account');
 
-    uiCtrl.promptUserInput('Select an option (1-4): ', (choice) => {
-      switch (choice) {
-        case '1':
-          processCtrl.inputAddress(username);
-          break;
-        case '2':
-          processCtrl.orderPickUp(username);
-          break;
-        case '3':
-          processCtrl.showOrderDetails(username);
-          break;
-        case '4':
-          mainMenu();
-          break;
-        default:
-          console.log('Invalid option. Please try again.');
-          accountMenu(username);
-      }
-    });
-  }
+  uiCtrl.promptUserInput('Select an option (1-4): ', (choice) => {
+    switch (choice) {
+      case '1':
+        processCtrl.inputAddress(username);
+        break;
+      case '2':
+        processCtrl.orderPickUp(username);
+        break;
+      case '3':
+        processCtrl.showOrderDetails(username);
+        break;
+      case '4':
+        mainMenu();
+        break;
+      default:
+        console.log('Invalid option. Please try again.');
+        accountMenu(username);
+    }
+  });
+}
 
-  // Start the app
-  mainMenu();
+// Start the app
+mainMenu();
 
